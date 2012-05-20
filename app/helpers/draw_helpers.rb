@@ -1,4 +1,5 @@
 module DrawHelpers
+  
   def rectFor1PxStroke(rect)
     CGRectMake(rect.origin.x + 0.5, rect.origin.y + 0.5, rect.size.width - 1, rect.size.height - 1)
   end
