@@ -1,3 +1,4 @@
+style = :full
 describe CoolButton do
   before do
     @cool_button = CoolButton.alloc.initWithFrame([[0.0, 0.0], [10.0, 50.0]])

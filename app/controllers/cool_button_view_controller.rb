@@ -4,6 +4,7 @@ class CoolButtonViewController < UIViewController
   def viewDidLoad
     super
     @button.addTarget(self, action:'clicked:', forControlEvents:UIControlEventTouchUpInside)
+    @button.setTitleColor(UIColor.blackColor, forState:UIControlStateHighlighted)
   end
   
   def didReceiveMemoryWarning

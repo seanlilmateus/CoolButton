@@ -1,5 +1,11 @@
 module DrawHelpers
-  
+
+  def CGContextState(context)
+    CGContextSaveGState(context);
+    yield
+    CGContextRestoreGState(context);
+  end
+
   def rectFor1PxStroke(rect)
     CGRectMake(rect.origin.x + 0.5, rect.origin.y + 0.5, rect.size.width - 1, rect.size.height - 1)
   end
@@ -16,22 +22,22 @@ module DrawHelpers
     start_point = CGPointMake(CGRectGetMidX(rect), CGRectGetMinY(rect))
     end_point = CGPointMake(CGRectGetMidX(rect), CGRectGetMaxY(rect))
     
-    CGContextSaveGState(context)
-    CGContextAddRect(context, rect)
-    CGContextClip(context)
-    CGContextDrawLinearGradient(context, gradient, start_point, end_point, 0)
-    CGContextRestoreGState(context)    
+    CGContextState(context) do
+      CGContextAddRect(context, rect)
+      CGContextClip(context)
+      CGContextDrawLinearGradient(context, gradient, start_point, end_point, 0)
+    end  
   end
   
   def draw1PxStroke(context, start_point, end_point, color)
-    CGContextSaveGState(context);
-    CGContextSetLineCap(context, KCGLineCapSquare)
-    CGContextSetStrokeColorWithColor(context, color)
-    CGContextSetLineWidth(context, 1.0)
-    CGContextMoveToPoint(context, start_point.x + 0.5, start_point.y + 0.5)
-    CGContextAddLineToPoint(context, end_point.x + 0.5, end_point.y + 0.5)
-    CGContextStrokePath(context)
-    CGContextRestoreGState(context)        
+    CGContextState(context) do
+      CGContextSetLineCap(context, KCGLineCapSquare)
+      CGContextSetStrokeColorWithColor(context, color)
+      CGContextSetLineWidth(context, 1.0)
+      CGContextMoveToPoint(context, start_point.x + 0.5, start_point.y + 0.5)
+      CGContextAddLineToPoint(context, end_point.x + 0.5, end_point.y + 0.5)
+      CGContextStrokePath(context)
+    end       
   end
   
   def drawGlossAndGradient(context, rect, start_color, end_color)

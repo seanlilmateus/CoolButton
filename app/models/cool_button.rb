@@ -31,7 +31,8 @@ class CoolButton < UIButton
     actual_brightness = @brightness
     actual_brightness -= 0.10 if self.state == UIControlStateHighlighted
     
-    black_color = UIColor.colorWithWhite(0.40, alpha:1.0).CGColor #UIColor.colorWithRed(0.0, green:0.0, blue:0.0, alpha:1.0).CGColor
+    black_color = UIColor.colorWithWhite(0.40, alpha:1.0).CGColor 
+    #UIColor.colorWithRed(0.0, green:0.0, blue:0.0, alpha:1.0).CGColor
 
     highlight_start = UIColor.colorWithRed(1.0, green:1.0, blue:1.0, alpha:0.4).CGColor
     highlight_stop = UIColor.colorWithRed(1.0, green:1.0, blue:1.0, alpha:0.1).CGColor
@@ -57,59 +58,57 @@ class CoolButton < UIButton
     
     # Draw shadow
     unless (self.state == UIControlStateHighlighted)
-      CGContextSaveGState(context)
-      CGContextSetFillColorWithColor(context, outer_top)
-      CGContextSetShadowWithColor(context, CGSizeMake(0, 2), 3.0, shadow_color)
-      CGContextAddPath(context, outer_path)
-      CGContextFillPath(context)
-      CGContextRestoreGState(context)
+      CGContextState(context) do
+        CGContextSetFillColorWithColor(context, outer_top)
+        CGContextSetShadowWithColor(context, CGSizeMake(0, 2), 3.0, shadow_color)
+        CGContextAddPath(context, outer_path)
+        CGContextFillPath(context)
+      end
     end
     
     # Draw gradient for outer path
-    CGContextSaveGState(context)
-    CGContextAddPath(context, outer_path)
-    CGContextClip(context)
-    
-    drawGlossAndGradient(context, outer_rect, outer_top, outer_bottom)
-    
-    CGContextRestoreGState(context)
+    CGContextState(context) do
+      CGContextAddPath(context, outer_path)
+      CGContextClip(context)
+      drawGlossAndGradient(context, outer_rect, outer_top, outer_bottom)
+    end
     
     # Draw gradient for inner path
-    CGContextSaveGState(context)
-    CGContextAddPath(context, inner_path)
-    CGContextClip(context)
-    drawGlossAndGradient(context, inner_rect, inner_top, inner_bottom)
-    CGContextRestoreGState(context)
+    CGContextState(context) do
+      CGContextAddPath(context, inner_path)
+      CGContextClip(context)
+      drawGlossAndGradient(context, inner_rect, inner_top, inner_bottom)
+    end
     
     
     # Draw highlight (if not selected)
     unless self.state == UIControlStateHighlighted
-      CGContextSaveGState(context)
-      CGContextSetLineWidth(context, 4.0)
-      CGContextAddPath(context, outer_path)
-      CGContextAddPath(context, highlight_path)
-      CGContextEOClip(context)
-      drawLinearGradient(context, outer_rect, highlight_start, highlight_stop)
-      CGContextRestoreGState(context)
+      CGContextState(context) do
+        CGContextSetLineWidth(context, 4.0)
+        CGContextAddPath(context, outer_path)
+        CGContextAddPath(context, highlight_path)
+        CGContextEOClip(context)
+        drawLinearGradient(context, outer_rect, highlight_start, highlight_stop)
+      end
     end
     
     # Stroke outer path
-    CGContextSaveGState(context)
-    CGContextSetLineWidth(context, 2.0)
-    CGContextSetStrokeColorWithColor(context, black_color)
-    CGContextAddPath(context, outer_path)
-    CGContextStrokePath(context)
-    CGContextRestoreGState(context)
+    CGContextState(context) do
+      CGContextSetLineWidth(context, 2.0)
+      CGContextSetStrokeColorWithColor(context, black_color)
+      CGContextAddPath(context, outer_path)
+      CGContextStrokePath(context)
+    end
     
     # Stroke inner path
-    CGContextSaveGState(context);
-    CGContextSetLineWidth(context, 2.0)
-    CGContextSetStrokeColorWithColor(context, inner_stroke)
-    CGContextAddPath(context, inner_path)
-    CGContextClip(context)
-    CGContextAddPath(context, inner_path)
-    CGContextStrokePath(context)
-    CGContextRestoreGState(context)        
+    CGContextState(context) do
+      CGContextSetLineWidth(context, 2.0)
+      CGContextSetStrokeColorWithColor(context, inner_stroke)
+      CGContextAddPath(context, inner_path)
+      CGContextClip(context)
+      CGContextAddPath(context, inner_path)
+      CGContextStrokePath(context)
+    end        
   end
   
   def hue=(value)
